@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <title>피하기</title>
+        <style>
+        #start{
+            float:right;
+            border: 1px solid black;
+            border-radius: 20px;
+            padding : 10px;
+            background-color: rgb(239,223,77);
+        }
+        #start p {
+            color: blue;
+        }    
+        #start:hover {
+            background-color:gray;
+            cursor:pointer;
+        }
+        canvas{
+            margin:50px 0 0 30%;
+        }
+        #scoreBoard{
+            float: none;
+        }
+            
+            
+        </style>
+    </head>
+    <body>
+        <div id="start">
+            <p>Game Start</p>
+        </div>
+        <div id="scoreBoard">
+            <span>High Score: </span>
+            <span id="highScore"></span>
+        </div>
+        <script>
+        var startButton = document.getElementById("start");
+        startButton.addEventListener("click",startGame);
+        function startGame(){
+            var width=750,height=750,range=20;
+            var player = {x:375,y:375,width:20,height:20,val:10};
+            
+            var enemy1 = {x:200,y:0,width:20,height:20,val:1};
+            var enemy2 = {x:400,y:0,width:20,height:20,val:1};
+            var enemy3 = {x:600,y:0,width:20,height:20,val:1};
+
+            var enemy11 = {x:200,y:750,width:20,height:20,val:1};
+            var enemy12 = {x:400,y:750,width:20,height:20,val:1};
+            var enemy13 = {x:600,y:750,width:20,height:20,val:1};
+
+            var enemy21 = {x:0,y:200,width:20,height:20,val:1};
+            var enemy22 = {x:0,y:400,width:20,height:20,val:1};
+            var enemy23 = {x:0,y:600,width:20,height:20,val:1};
+
+            var enemy31 = {x:750,y:200,width:20,height:20,val:1};
+            var enemy32 = {x:750,y:400,width:20,height:20,val:1};
+            var enemy33 = {x:750,y:600,width:20,height:20,val:1};
+            var score=0,count=0, key=[];
+            var speed = 20;
+            var life=3;
+            var sp_a;
+            var canvas=document.createElement("canvas");
+
+            canvas.width = width;
+            canvas.height = height;
+            canvas.style.border="1px solid black";
+            var ctx=canvas.getContext("2d");
+            document.body.appendChild(canvas);
+            var highestScore=localStorage.getItem("highScore");
+            if(highestScore==null) highestScore=0;
+            var tmpTxt = document.createTextNode(highestScore);
+            var highP= document.getElementById("highScore");
+            highP.appendChild(tmpTxt);
+
+            var interval = setInterval(function()
+            {
+                update();
+                draw();
+                if(life<=0)
+                {
+                    alert("Game Over!!다시 해봐 태경아~~어렵지?\nScore : "+score);
+                    clearInterval(interval);
+                    canvas.remove();
+                    if(highestScore<score){
+                        tmpTxt.remove();
+                        tmpTxt = document.createTextNode(score);
+                        highP.appendChild(tmpTxt);
+                        highestScore = score;
+                        localStorage.setItem("highScore",score);
+                    }
+                }
+                //스코어 800 넘으면
+                if(score>=200)
+                {
+                    alert("Game Won!! 800점 달성! 다음 페이지로~");
+                    score=0; //페이지 넘어가게 스코어 초기화
+                    location.href = "quiz.html";
+                }
+            },speed)
+            
+            function draw()
+            {
+                ctx.save();
+                ctx.fillStyle = "black"
+                ctx.fillRect(0,0,width+5, height+5);
+                ctx.fillStyle = "white"
+                ctx.fillRect(1,1,width-2, height-2);
+                ctx.fillStyle = "red";
+                ctx.fillRect(enemy1.x-enemy1.width/2,enemy1.y-enemy1.height/2,enemy1.width,player.height);
+                ctx.fillStyle="blue";
+                ctx.fillRect(enemy2.x-enemy2.width/2,enemy2.y-enemy2.height/2,enemy2.width,player.height);
+                ctx.fillStyle="orange";
+                ctx.fillRect(enemy3.x-enemy3.width/2,enemy3.y-enemy3.height/2,enemy3.width,player.height);
+
+                ctx.fillStyle = "red";
+                ctx.fillRect(enemy11.x-enemy11.width/2,enemy11.y-enemy11.height/2,enemy11.width,player.height);
+                ctx.fillStyle="blue";
+                ctx.fillRect(enemy12.x-enemy12.width/2,enemy12.y-enemy12.height/2,enemy12.width,player.height);
+                ctx.fillStyle="orange";
+                ctx.fillRect(enemy13.x-enemy13.width/2,enemy13.y-enemy13.height/2,enemy13.width,player.height);
+
+                ctx.fillStyle = "red";
+                ctx.fillRect(enemy21.x-enemy21.width/2,enemy21.y-enemy21.height/2,enemy21.width,player.height);
+                ctx.fillStyle="blue";
+                ctx.fillRect(enemy22.x-enemy22.width/2,enemy22.y-enemy22.height/2,enemy22.width,player.height);
+                ctx.fillStyle="orange";
+                ctx.fillRect(enemy23.x-enemy23.width/2,enemy23.y-enemy23.height/2,enemy23.width,player.height);
+
+                ctx.fillStyle = "red";
+                ctx.fillRect(enemy31.x-enemy31.width/2,enemy31.y-enemy31.height/2,enemy31.width,player.height);
+                ctx.fillStyle="blue";
+                ctx.fillRect(enemy32.x-enemy32.width/2,enemy32.y-enemy32.height/2,enemy32.width,player.height);
+                ctx.fillStyle="orange";
+                ctx.fillRect(enemy33.x-enemy33.width/2,enemy33.y-enemy33.height/2,enemy33.width,player.height);
+
+                ctx.fillStyle="black";
+                ctx.fillRect(player.x-player.width/2,player.y-player.height/2,player.width,player.height);
+                ctx.font="20px Arial";
+                ctx.fillStyle="black";
+                ctx.fillText("Score:"+score, 100, 20);
+                ctx.fillText("Life:"+life,0,20);
+            }
+            function update()
+            {
+                if(player.x>=enemy1.x-range&&player.x<=enemy1.x+range&&player.y>=enemy1.y-range&&player.y<=enemy1.y+range)
+                {//player를 먹음 
+                    enemy1.y=0;
+                    life--;
+                }
+                if(player.x>=enemy2.x-range&&player.x<=enemy2.x+range&&player.y>=enemy2.y-range&&player.y<=enemy2.y+range)
+                {//player를 먹음 
+                    enemy2.y=0;
+                    life--;
+                }
+                if(player.x>=enemy3.x-range&&player.x<=enemy3.x+range&&player.y>=enemy3.y-range&&player.y<=enemy3.y+range)
+                {//player를 먹음 
+                    enemy3.y=0;
+                    life--;
+                }
+                if(enemy1.y>height||enemy1.y==0)
+                {
+                    enemy1.x=Math.ceil(Math.random()*width);
+                    enemy1.y=0;
+                }
+                if(enemy2.y>height||enemy2.y==0)
+                {
+                    enemy2.x=Math.ceil(Math.random()*width);
+                    enemy2.y=0;
+                }
+                if(enemy3.y>height||enemy3.y==0)
+                {
+                    enemy3.x=Math.ceil(Math.random()*width);
+                    enemy3.y=0;
+                }
+                if(player.x>=enemy11.x-range&&player.x<=enemy11.x+range&&player.y>=enemy11.y-range&&player.y<=enemy11.y+range)
+                {//player를 먹음 
+                    enemy11.y=750;
+                    life--;
+                }
+                if(player.x>=enemy12.x-range&&player.x<=enemy12.x+range&&player.y>=enemy12.y-range&&player.y<=enemy12.y+range)
+                {//player를 먹음 
+                    enemy12.y=750;
+                    life--;
+                }
+                if(player.x>=enemy13.x-range&&player.x<=enemy13.x+range&&player.y>=enemy13.y-range&&player.y<=enemy13.y+range)
+                {//player를 먹음 
+                    enemy13.y=750;
+                    life--;
+                }
+                if(enemy11.y<0||enemy11.y==750)
+                {
+                    enemy11.x=Math.ceil(Math.random()*width);
+                    enemy11.y=750;
+                }
+                if(enemy12.y<0||enemy12.y==750)
+                {
+                    enemy12.x=Math.ceil(Math.random()*width);
+                    enemy12.y=750;
+                }
+                if(enemy13.y<0||enemy13.y==750)
+                {
+                    enemy13.x=Math.ceil(Math.random()*width);
+                    enemy13.y=750;
+                }
+
+                if(player.x>=enemy21.x-range&&player.x<=enemy21.x+range&&player.y>=enemy21.y-range&&player.y<=enemy21.y+range)
+                {//player를 먹음 
+                    enemy21.x=0;
+                    life--;
+                }
+                if(player.x>=enemy22.x-range&&player.x<=enemy22.x+range&&player.y>=enemy22.y-range&&player.y<=enemy22.y+range)
+                {//player를 먹음 
+                    enemy22.x=0;
+                    life--;
+                }
+                if(player.x>=enemy23.x-range&&player.x<=enemy23.x+range&&player.y>=enemy23.y-range&&player.y<=enemy23.y+range)
+                {//player를 먹음 
+                    enemy13.x=0;
+                    life--;
+                }
+                if(enemy21.x>width||enemy21.x==0)
+                {
+                    enemy21.y=Math.ceil(Math.random()*width);
+                    enemy21.x=0;
+                }
+                if(enemy22.x>width||enemy22.x==0)
+                {
+                    enemy22.y=Math.ceil(Math.random()*width);
+                    enemy22.x=0;
+                }
+                if(enemy23.x>width||enemy23.x==0)
+                {
+                    enemy23.y=Math.ceil(Math.random()*width);
+                    enemy23.x=0;
+                }
+
+                if(player.x>enemy31.x-range&&player.x<=enemy31.x+range&&player.y>=enemy31.y-range&&player.y<=enemy31.y+range)
+                {//player를 먹음 
+                    enemy31.x=750;
+                    life--;
+                }
+                if(player.x>enemy32.x-range&&player.x<=enemy32.x+range&&player.y>=enemy32.y-range&&player.y<=enemy32.y+range)
+                {//player를 먹음 
+                    enemy32.x=750;
+                    life--;
+                }
+                if(player.x>enemy33.x-range&&player.x<=enemy33.x+range&&player.y>=enemy33.y-range&&player.y<=enemy33.y+range)
+                {//player를 먹음 
+                    enemy33.x=750;
+                    life--;
+                }
+                if(enemy31.x<0||enemy31.x==0)
+                {
+                    enemy31.y=Math.ceil(Math.random()*width);
+                    enemy31.x=750;
+                }
+                if(enemy32.x<0||enemy32.x==0)
+                {
+                    enemy32.y=Math.ceil(Math.random()*width);
+                    enemy32.x=750;
+                }
+                if(enemy33.x<0||enemy33.x==0)
+                {
+                    enemy33.y=Math.ceil(Math.random()*width);
+                    enemy33.x=750;
+                }
+
+                if(key[37]&&player.x-player.width/2>0)player.x-=player.val;
+                if(key[38]&&player.y-player.height/2>0)player.y-=player.val;
+                if(key[39]&&player.x+player.width/2<width)player.x+=player.val;
+                if(key[40]&&player.y+player.height/2<height)player.y+=player.val;
+
+                enemy1.y+=enemy1.val;//up=>down한 것임
+                enemy2.y+=enemy2.val;
+                enemy3.y+=enemy3.val;
+
+                enemy11.y-=enemy11.val;//down->up
+                enemy12.y-=enemy12.val;
+                enemy13.y-=enemy13.val;
+
+                enemy21.x+=enemy21.val;//left->right 장애물 움직임
+                enemy22.x+=enemy22.val;
+                enemy23.x+=enemy23.val;
+
+                enemy31.x-=enemy31.val;// ri->le
+                enemy32.x-=enemy32.val;
+                enemy33.x-=enemy33.val;
+
+                //속도야 태경아 설마 여기까지 읽나?
+                enemy1.val+=0.02;
+                enemy2.val+=0.02;
+                enemy3.val+=0.02;
+
+                enemy11.val+=0.02;
+                enemy12.val+=0.02;
+                enemy13.val+=0.02;
+
+                enemy21.val+=0.02;
+                enemy22.val+=0.02;
+                enemy23.val+=0.02;
+
+                enemy31.val+=0.02;
+                enemy32.val+=0.02;
+                enemy33.val+=0.02;
+
+                score++;
+            }
+            window.addEventListener("keydown",function(e){
+                key[e.keyCode]=true;
+            });
+            
+            window.addEventListener("keyup",function(e){
+                key[e.keyCode]=false;
+            });
+        }
+        </script>
+    </body>
+</html>

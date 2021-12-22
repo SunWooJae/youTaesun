@@ -1,0 +1,35 @@
+*{
+    margin:0;
+    padding:0;
+}
+body{
+    background-image: url("img/a4.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+#next{
+    position: absolute;
+    top:700px;
+    left:920px;
+    text-align: center;
+    font-size:20px;
+    color: yellow;
+}
+h1{
+    text-align: center;
+    top:100px;
+}
+#intro {
+    text-align: center;
+    color: rgb(252, 0, 63);
+    top:200px;
+}
+#squid{
+    border-radius: 50%;
+    width: 700px;
+    height:700px;
+    display: block;
+    margin: 0px auto;
+}

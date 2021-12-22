@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>메리 크리스마스</title>
+     <link rel="stylesheet" href="0.css">
+</head>
+<body>
+  <form id="signup">
+      <fieldset>
+            <legend>개인 정보</legend>
+            <ul>
+              <li> 
+                <label for="fullname">이름</label>
+                <input id="fullname_" name="fullname" type="text" placeholder="유태경" required>
+              </li>
+              <li>
+                <label for="pw">비밀번호</label>
+                <input id="pw_" name="pw" type="text" placeholder="힌트 : 생일" required autocomplete="off">
+              </li>
+            </ul>
+          </fieldset>
+          <fieldset>
+            <button type="reset" id="submit"> 로그인 </button> 
+          </fieldset>
+        </form>
+  <script type="text/javascript">
+   document.getElementById('submit').onclick = function(){
+      var name = document.getElementById('fullname_').value;
+      var pass = document.getElementById('pw_').value;
+      if(name==="유태경" && pass==="010123"){
+        alert("로그인 성공!");
+        location.href = "1start.html";
+        //return false;
+      }
+      else{
+        alert("로그인 실패!");
+      }
+    }
+  </script>
+</body>
+</html>
